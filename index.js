@@ -13,7 +13,7 @@ canvas.height = dimension;
 const ctx = canvas.getContext("2d");
 
 // Set the number of cells and cell size
-let cellCount = 10;
+let cellCount = 20;
 const cellSize = canvas.width / cellCount;
 
 // Cell class to create cells
