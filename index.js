@@ -118,8 +118,11 @@ function dfs(cell) {
       setTimeout(dfs, 50, currentCell);
     }
   } else {
-    // maze generated... add the player and destination
-    addPlayer(gridCells[0], gridCells[gridCells.length - 1]);
+    // maze generated...
+    pathStack.push(gridCells[0]); //Optional - add the first cell to the path
+    solveMaze(gridCells[0], gridCells[gridCells.length - 1]);
+    
+    //addPlayer(gridCells[0], gridCells[gridCells.length - 1]);
   }
 }
 
@@ -158,6 +161,42 @@ function highlight(cell, color) {
   ctx.fillStyle = color;
   ctx.fillRect(xPos, yPos, cellSize, cellSize);
 }
+
+// Solve the maze
+const visitedCells = new Set();
+const pathStack = [];
+
+function solveMaze(startCell, endCell) {
+  if (startCell === endCell) {
+    alert("Found end");
+    return;
+  }
+
+  currentCell = startCell;
+  visitedCells.add(currentCell);
+  const adjacentCells = getAdjacentCells(currentCell);
+
+  const unvisitedPaths = Object.keys(currentCell.walls)
+    .filter((path) => !currentCell.walls[path])
+    .filter((path) => !visitedCells.has(adjacentCells[path]));
+
+  if (unvisitedPaths.length > 0) {
+    const nextPath =
+      unvisitedPaths[Math.floor(Math.random() * unvisitedPaths.length)];
+    const nextCell = adjacentCells[nextPath];
+    currentCell = nextCell;
+    pathStack.push(currentCell);
+  } else {
+    pathStack.pop();
+    currentCell = pathStack[pathStack.length - 1];
+  }
+
+  redraw();
+  pathStack.forEach((cell) => highlight(cell, "#00000050"));
+  setTimeout(solveMaze, 300, currentCell, endCell);
+}
+
+
 
 // Function to add player and destination after maze generation
 let playerCell, destinationCell;
